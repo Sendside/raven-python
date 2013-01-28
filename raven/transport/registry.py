@@ -1,5 +1,5 @@
 from raven.transport.base import HTTPTransport, GeventedHTTPTransport, TwistedHTTPTransport, \
-  TornadoHTTPTransport, UDPTransport, EventletHTTPTransport
+  TornadoHTTPTransport, UDPTransport, EventletHTTPTransport, ProxiedHTTPTransport
 from raven.transport.exceptions import DuplicateScheme
 from raven.transport.threaded import ThreadedHTTPTransport
 from raven.utils import urlparse
@@ -59,6 +59,7 @@ class TransportRegistry(object):
 
 default_transports = [
     HTTPTransport,
+    ProxiedHTTPTransport,
     ThreadedHTTPTransport,
     GeventedHTTPTransport,
     TwistedHTTPTransport,

@@ -190,6 +190,28 @@ class HTTPTransport(Transport):
         return scope
 
 
+class ProxiedHTTPTransport(HTTPTransport):
+
+    scheme = ['proxy+http', 'proxy+https']
+
+    def __init__(self, *args, **kwargs):
+        super(ProxiedHTTPTransport, self).__init__(*args, **kwargs)
+        # Remove the proxy+ from the protocol as it is not a real protocol
+        self._url = self._url.split('+', 1)[-1]
+
+    def send(self, data, headers):
+        """
+        Sends a request to a remote webserver using HTTP POST via a system-
+        defined http_proxy (or https_proxy).
+        """
+        # Create and install a custom opener that handles proxied requests;
+        # uses http_proxy / https_proxy environment variables if defined
+        proxyhandler = urllib2.ProxyHandler()
+        opener = urllib2.build_opener(proxyhandler)
+        urllib2.install_opener(opener)
+        super(ProxiedHTTPTransport, self).send(data, headers)
+
+
 class GeventedHTTPTransport(HTTPTransport):
 
     scheme = ['gevent+http', 'gevent+https']
